@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUser, FaEnvelope, FaPhone, FaCalendar, FaAddressCard, FaRegMoneyBillAlt, FaStar, FaSignOutAlt, FaClipboardList, FaClock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance'; // Adjust the path to your axios instance
+import LeaveCard from '../components/Cards/LeaveCardEmp';
 
 const EmployeeDashBoard = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -15,6 +16,8 @@ const EmployeeDashBoard = () => {
   const [formError, setFormError] = useState(null);
   const [attendanceStatus, setAttendanceStatus] = useState('');
   const navigate = useNavigate();
+
+  
 
   const getUserInfo = async () => {
     try {
@@ -50,8 +53,12 @@ const EmployeeDashBoard = () => {
 
   const getAppliedLeaves = async () => {
     try {
-      const response = await axiosInstance.get('/applied-leaves');
-      setAppliedLeaves(response.data.leaves);
+      const response = await axiosInstance.get('/get-applied-leaves');
+      if (response.data && !response.data.error) {
+        setAppliedLeaves(response.data.leaves);
+      } else {
+        console.error('Failed to fetch applied leaves:', response.data.message);
+      }
     } catch (error) {
       console.error('Error fetching applied leaves:', error);
     }
@@ -89,6 +96,7 @@ const EmployeeDashBoard = () => {
           reason: '',
         });
         setFormError(null);
+        getAppliedLeaves();
       } else {
         setFormError(response.data.message);
       }
@@ -100,13 +108,15 @@ const EmployeeDashBoard = () => {
 
   const markAttendance = async () => {
     try {
-      const response = await axiosInstance.post('/mark-attendance');
-      setAttendanceStatus(response.data.message);  // Display success or failure message
+      // Set the attendance status as 'Present'
+      const response = await axiosInstance.post('/mark-attendance', { status: 'Present' });
+      setAttendanceStatus(response.data.message); // Display success or failure message
     } catch (error) {
       console.error('Error marking attendance:', error);
       setAttendanceStatus('Failed to mark attendance.');
     }
   };
+  
 
   const markDeparture = async () => {
     try {
@@ -268,26 +278,19 @@ const EmployeeDashBoard = () => {
       </div>
 
       {/* Applied Leaves Section */}
-      <div className="container mx-auto p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Applied Leaves</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {appliedLeaves.length > 0 ? (
-            appliedLeaves.map((leave, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-md p-4 text-center"
-              >
-                <p className="font-semibold text-gray-800">{leave.leaveType}</p>
-                <p className="text-gray-500">From: {new Date(leave.startDate).toLocaleDateString()}</p>
-                <p className="text-gray-500">To: {new Date(leave.endDate).toLocaleDateString()}</p>
-                <p className="text-gray-600">Status: {leave.status}</p>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500">No applied leaves yet.</p>
-          )}
-        </div>
-      </div>
+    <div className="container mx-auto p-6">
+  <h2 className="text-2xl font-semibold text-gray-800 mb-4">Applied Leaves</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {appliedLeaves.length > 0 ? (
+      appliedLeaves.map((leave, index) => (
+        <LeaveCard key={index} leave={leave} />
+      ))
+    ) : (
+      <p className="text-gray-500">No applied leaves yet.</p>
+    )}
+  </div>
+</div>
+
     </div>
   );
 };

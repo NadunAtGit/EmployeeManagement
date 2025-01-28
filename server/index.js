@@ -493,12 +493,77 @@ app.put("/update-employee/:id", authenticateToken, authorizeRoles(["Admin", "Man
   }
 });
 
+app.post("/mark-attendance", authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.user; // Get email from authenticated user
+    const { status } = req.body; // Get status from the request body
+
+    if (!status) {
+      return res.status(400).json({
+        error: true,
+        message: "Status is required.",
+      });
+    }
+
+    if (!["Present", "Absent", "On Leave"].includes(status)) {
+      return res.status(400).json({
+        error: true,
+        message: "Invalid status. Status should be one of 'Present', 'Absent', or 'On Leave'.",
+      });
+    }
+
+    const isEmployee = await Employee.findOne({ email });
+    if (!isEmployee) {
+      return res.status(404).json({
+        error: true,
+        message: "Employee not found",
+      });
+    }
+
+    const todayDate = moment().format("YYYY-MM-DD"); // Format today's date
+    const existingAttendance = await Attendance.findOne({
+      employeeId: isEmployee._id,
+      date: todayDate,
+    });
+
+    if (existingAttendance) {
+      return res.status(400).json({
+        error: true,
+        message: "Attendance for today has already been marked.",
+      });
+    }
+
+    const arrivalTime = status === "Present" ? moment().format("YYYY-MM-DD HH:mm") : undefined;
+
+    const newAttendance = new Attendance({
+      employeeId: isEmployee._id,
+      date: todayDate, // String format
+      status: status,
+      arrivalTime: arrivalTime,
+      departureTime: undefined,
+    });
+
+    await newAttendance.save();
+
+    return res.status(201).json({
+      error: false,
+      message: "Attendance marked successfully",
+      attendance: newAttendance,
+    });
+  } catch (error) {
+    console.error("Error marking attendance: ", error);
+    return res.status(500).json({
+      error: true,
+      message: "Failed to mark attendance. Please try again later.",
+    });
+  }
+});
+
 
 app.put("/mark-departure", authenticateToken, async (req, res) => {
   try {
-    const { email } = req.user; // Get username from authenticated user
+    const { email } = req.user; // Get email from authenticated user
 
-    // Check if the username is provided
     if (!email) {
       return res.status(400).json({
         error: true,
@@ -506,7 +571,7 @@ app.put("/mark-departure", authenticateToken, async (req, res) => {
       });
     }
 
-    // Find the employee by username
+    // Find the employee by email
     const employee = await Employee.findOne({ email });
     if (!employee) {
       return res.status(404).json({
@@ -515,17 +580,15 @@ app.put("/mark-departure", authenticateToken, async (req, res) => {
       });
     }
 
-    // Get today's date (current date and time)
-    const today = new Date();
-    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    // Get today's date as a formatted string
+    const todayDate = moment().format("YYYY-MM-DD");
 
-    // Check if the attendance record for today already exists
+    // Find the attendance record for today
     const attendance = await Attendance.findOne({
       employeeId: employee._id,
       date: todayDate,
     });
 
-    // If no attendance record is found, return an error
     if (!attendance) {
       return res.status(404).json({
         error: true,
@@ -533,7 +596,9 @@ app.put("/mark-departure", authenticateToken, async (req, res) => {
       });
     }
 
-    // Check if the employee is already marked as "Absent" or "On Leave"
+    console.log("Current departureTime:", attendance.departureTime); // Log the current departure time for debugging
+
+    // Check if the employee is marked as "Present"
     if (attendance.status !== "Present") {
       return res.status(400).json({
         error: true,
@@ -541,7 +606,7 @@ app.put("/mark-departure", authenticateToken, async (req, res) => {
       });
     }
 
-    // Check if departure time is already set
+    // Check if departure time is set to "undefined" string
     if (attendance.departureTime !== "undefined") {
       return res.status(400).json({
         error: true,
@@ -549,10 +614,10 @@ app.put("/mark-departure", authenticateToken, async (req, res) => {
       });
     }
 
-    // Set departure time to current time
+    // Set the departure time to the current time
     const departureTime = moment().format("YYYY-MM-DD HH:mm");
 
-    // Update the attendance record with the departure time
+    // Update the attendance record
     attendance.departureTime = departureTime;
     await attendance.save();
 
@@ -571,81 +636,6 @@ app.put("/mark-departure", authenticateToken, async (req, res) => {
 });
 
 
-app.post("/mark-attendance", authenticateToken, async (req, res) => {
-  try {
-    const { email } = req.user; // Get email from authenticated user
-    const { status } = req.body; // Get status from the request body
-
-    // Validate required field (status)
-    if (!status) {
-      return res.status(400).json({
-        error: true,
-        message: "Status is required.",
-      });
-    }
-
-    // Validate status (must be one of the accepted values)
-    if (!["Present", "Absent", "On Leave"].includes(status)) {
-      return res.status(400).json({
-        error: true,
-        message: "Invalid status. Status should be one of 'Present', 'Absent', or 'On Leave'.",
-      });
-    }
-
-    // Check if the employee exists in the Employee collection
-    const isEmployee = await Employee.findOne({ email });
-    if (!isEmployee) {
-      return res.status(404).json({
-        error: true,
-        message: "Employee not found",
-      });
-    }
-
-    // Get today's date (current date and time)
-    const today = new Date();
-    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-    // Check if the employee has already marked attendance for the current date
-    const existingAttendance = await Attendance.findOne({
-      employeeId: isEmployee._id,
-      date: todayDate,
-    });
-
-    if (existingAttendance) {
-      return res.status(400).json({
-        error: true,
-        message: "Attendance for today has already been marked.",
-      });
-    }
-
-    // Set arrivalTime to current time if the status is "Present"
-    const arrivalTime = status === "Present" ? moment().format("YYYY-MM-DD HH:mm") : undefined;
-
-    // Create a new attendance record
-    const newAttendance = new Attendance({
-      employeeId: isEmployee._id,
-      date: todayDate, // Store today's date (without time)
-      status: status,
-      arrivalTime: arrivalTime, // Set arrival time if present
-      departureTime: undefined, // Departure time will be set later
-    });
-
-    await newAttendance.save();
-
-    return res.status(201).json({
-      error: false,
-      message: "Attendance marked successfully",
-      attendance: newAttendance,
-    });
-  } catch (error) {
-    console.error("Error marking attendance: ", error);
-
-    return res.status(500).json({
-      error: true,
-      message: "Failed to mark attendance. Please try again later.",
-    });
-  }
-});
 
 app.post("/upload-image",upload.single("image"),async(req,res)=>{
   
@@ -751,8 +741,8 @@ app.post('/apply-leave', authenticateToken, async (req, res) => {
 
 
 
-app.put('/approve-leave/:leaveId', authenticateToken,authorizeRoles(["Admin", "Manager"]), async (req, res) => {
-  const { leaveId } = req.params;
+app.put('/approve-leave/:leaveId', authenticateToken, authorizeRoles(["Admin", "Manager"]), async (req, res) => {
+  const { leaveId } = req.params;  // Fix: extracting leaveId from params
   const { status } = req.body;
 
   // Check if the user is authorized (Admin/Manager)
@@ -807,6 +797,84 @@ app.get('/get-not-approved-leaves', authenticateToken,authorizeRoles(["Admin", "
   }
 });
 
+
+app.get("/get-applied-leaves", authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.user; // Extract email from the authenticated user's token
+
+    // Find the user in the Employee collection to get their ID
+    const user = await Employee.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        error: true,
+        message: "User not found",
+      });
+    }
+
+    // Retrieve the leaves applied by the user
+    const appliedLeaves = await Leave.find({ email: user.email });
+
+    // Send the applied leaves as a response
+    return res.status(200).json({
+      error: false,
+      leaves: appliedLeaves,
+    });
+  } catch (error) {
+    console.error("Error fetching applied leaves: ", error);
+    return res.status(500).json({
+      error: true,
+      message: "Failed to fetch applied leaves. Please try again later.",
+    });
+  }
+});
+
+
+app.get("/get-count-attendance", authenticateToken, async (req, res) => {
+  try {
+    // Get today's date as a string
+    const today = moment().format("YYYY-MM-DD");
+
+    // Generate the last 5 days as strings in "YYYY-MM-DD" format
+    const lastFiveDays = [];
+    for (let i = 0; i < 5; i++) {
+      lastFiveDays.push(moment().subtract(i, "days").format("YYYY-MM-DD"));
+    }
+
+    // Query the attendance collection
+    const attendanceData = await Attendance.aggregate([
+      {
+        $match: {
+          date: { $in: lastFiveDays }, // Match attendance dates within the last 5 days
+          status: "Present", // Assuming you are counting 'Present' employees
+        },
+      },
+      {
+        $group: {
+          _id: "$date", // Group by the `date` field
+          count: { $sum: 1 }, // Count the number of records for each date
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort the results by date in ascending order
+      },
+    ]);
+
+    // Map the results to include missing dates with zero attendance
+    const attendanceCounts = lastFiveDays.map((day) => {
+      const record = attendanceData.find((item) => item._id === day);
+      return {
+        date: day,
+        count: record ? record.count : 0, // Use 0 if no record is found for that date
+      };
+    });
+
+    // Return the results
+    res.status(200).json({ success: true, attendance: attendanceCounts });
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 
 
