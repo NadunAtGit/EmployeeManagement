@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.rdp-root {
+  --rdp-accent-color: #12c4df; /* Primary color for accents (e.g., hover/selected states) */
+  --rdp-accent-background-color: #dffbff; /* Background color for selected dates */
+  --rdp-day-button-border-radius: 8px; /* Border radius for day buttons */
+  --rdp-selected-font: bold medium var(--rdp-font-family); /* Font color for selected dates */
+  
+}
+
+
+
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif; /* Default font */
+  }
+
+  
+}
+
+.scrollbar::-webkit-scrollbar{
+  width:3px;
+  height:3px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb{
+  background-color: #2fc4db;
+  border-radius: 3px;
+}
+
+.scrollbar::-webkit-scrollbar-track{
+  background-color: rgb(172,201,229);
+  
+}
+
+@layer components {
+  .head {
+    font-size: 2rem;
+    color:#0062FF;
+    font-family: 'Great Vibes', cursive;
+  }
+
+  .bg-img {
+    background-image: url('./assets/login-bg.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+   .input-box{
+    @apply  w-full outline-none px-5 py-3  text-sm bg-gray-100 mb-3;
+   }  
+
+   .btn-primary{
+    @apply bg-red-400 text-white font-semibold w-full shadow-md shadow-red-200 rounded-md py-2 my-2;
+   }
+
+   .model-box{
+    @apply w-[80vw]  md:w-[40%] h-[80vh] bg-white rounded-lg  mx-auto mt-14 p-5 overflow-y-scroll  z-50;
+  }
+
+  .input-label{
+    @apply text-xs text-slate-400;
+  }
+
+   @media (min-width:200px) {
+    .right-div{
+      width: 100% !important;
+
+    }
+
+    
+    
+   }
+}  

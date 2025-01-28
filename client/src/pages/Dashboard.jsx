@@ -1,0 +1,98 @@
+import React, { useState, useEffect } from 'react';
+import { AiOutlineNumber } from "react-icons/ai";
+import { AiOutlineClockCircle } from "react-icons/ai";
+import { MdEventBusy } from "react-icons/md";
+import TopEmployeeCard from '../components/TopEmployeeCard';
+import axiosInstance from "../utils/axiosInstance";
+
+const Dashboard = () => {
+  const [currentDateTime, setCurrentDateTime] = useState({
+    date: '',
+    time: '',
+  });
+  const[totalEmployees,setTotalEmployees]=useState("");
+  const getEmployeeData = async () => {
+    try {
+      const response = await axiosInstance.get("/get-all-employees");
+      if (response.data?.totalEmployees) {
+        setTotalEmployees(response.data.totalEmployees);
+      }
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  };
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      const date = now.toLocaleDateString(); // Format: MM/DD/YYYY
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format: HH:MM AM/PM
+      setCurrentDateTime({ date, time });
+    };
+
+    updateDateTime(); // Update immediately
+    const interval = setInterval(updateDateTime, 1000); // Update every second
+    getEmployeeData();
+    return () => clearInterval(interval); 
+    // Cleanup interval on unmount
+  }, []);
+
+
+
+  return (
+    <div className='container mx-auto py-4 relative'>
+        <div className='flex items-center justify-between mb-15'>
+            <div>
+                <h1 className='md:text-4xl font-bold border-b-2 border-gray-400 inline'>Dashboard</h1>
+                <h1 className='text-gray-600 mt-2'>You can see today's summary</h1>
+            </div>
+
+            <div className='md:flex justify-between gap-5'>
+                <h1 className='text-xl font-semi-bold'>{currentDateTime.date}</h1>
+                <h2 className='text-xl font-semi-bold'>{currentDateTime.time}</h2>
+            </div>
+        </div>
+      
+      <div className='flex flex-col items-center'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14'>
+          <div className='flex items-center justify-between gap-4 border-4 border-blue-500 p-3 rounded-xl'>
+            <div>
+              <AiOutlineNumber className="text-blue-500 w-20 h-20" />
+            </div>
+            <div>
+              <h4 className='mb-2 text-gray-600 font-semibold'>Total Employees :</h4>
+              <h1 className='text-5xl'>{totalEmployees}</h1>
+            </div>
+          </div>
+
+          <div className='flex items-center justify-between gap-4 border-4 border-blue-500 p-3 rounded-xl'>
+            <div>
+              <AiOutlineClockCircle className="text-blue-500 w-20 h-20" />
+            </div>
+            <div>
+              <h4 className='mb-2 text-gray-600 font-semibold'>Today's Leaves :</h4>
+              <h1 className='text-5xl'>4</h1>
+            </div>
+          </div>
+
+          <div className='flex items-center justify-between gap-4 border-4 border-blue-500 p-3 rounded-xl'>
+            <div>
+              <MdEventBusy className="text-blue-500 w-20 h-20" />
+            </div>
+            <div>
+              <h4 className='mb-2 text-gray-600 font-semibold'>Today's Leaves :</h4>
+              <h1 className='text-5xl'>4</h1>
+            </div>
+          </div>
+        </div>
+
+        <div className='my-7 grid grid-cols-1 md:grid-cols-2 gap-14'>
+          <TopEmployeeCard/>
+          <TopEmployeeCard/>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
