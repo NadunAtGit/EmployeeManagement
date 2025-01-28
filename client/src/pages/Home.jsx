@@ -8,9 +8,10 @@ import { BiDollar } from "react-icons/bi";
 import { FiLogOut } from "react-icons/fi";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import Modal from "react-modal"; // Ensure you have `react-modal` installed
-import UserData from "../components/userData";
+import UserData from "../components/UserData";
 import axiosInstance from "../utils/axiosInstance";
 import UserDataModal from "../components/UserDataModal";
+import { FaPaperPlane } from 'react-icons/fa';
 
 // Set App Element for Accessibility (required by react-modal)
 Modal.setAppElement("#root");
@@ -98,6 +99,14 @@ const Home = () => {
             onClick={() => setOpenUserModal(true)}
           >
             <UserData username={userInfo?.username} email={userInfo?.email} imgUrl={userInfo?.imageUrl} />
+            
+            <Link to="/employee-dashboard" className="text-decoration-none">
+      <button className="bg-white/10 text-white px-4 py-2 rounded-full flex items-center gap-2 backdrop-blur-md transition-transform transform hover:scale-95 focus:outline-none mb-5">
+        <FaPaperPlane className="text-xl" />
+        Your Dashboard
+      </button>
+    </Link>
+
           </div>
 
           {!isOpen && (
