@@ -30,6 +30,7 @@ const Dashboard = () => {
   });
   const [totalEmployees, setTotalEmployees] = useState("");
   const [attendanceData, setAttendanceData] = useState([]);
+  const [leaveCount, setLeaveCount] = useState(0);
 
   // Fetch total employees
   const getEmployeeData = async () => {
@@ -55,6 +56,15 @@ const Dashboard = () => {
     }
   };
 
+  const fetchLeaveCount = async () => {
+    try {
+      const response = await axiosInstance.get("/leave-count"); // API to get today's leave count
+      setLeaveCount(response.data.leaveCount); // Set leave count in state
+    } catch (error) {
+      console.error("Error fetching leave count:", error);
+    }
+  };
+
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
@@ -69,6 +79,7 @@ const Dashboard = () => {
     updateDateTime(); // Update immediately
     const interval = setInterval(updateDateTime, 1000); // Update every second
     getEmployeeData();
+    fetchLeaveCount();
     fetchAttendanceData();
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
@@ -128,7 +139,7 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 mb-18">
           <div className="flex items-center justify-between gap-4 border-4 border-blue-500 p-3 rounded-xl">
             <div>
               <AiOutlineNumber className="text-blue-500 w-20 h-20" />
@@ -147,9 +158,9 @@ const Dashboard = () => {
             </div>
             <div>
               <h4 className="mb-2 text-gray-600 font-semibold">
-                Today's Leaves:
+                Today Attendance:
               </h4>
-              <h1 className="text-5xl">4</h1>
+              <h1 className="text-5xl">{attendanceData[0]?.count}</h1>
             </div>
           </div>
 
@@ -161,15 +172,15 @@ const Dashboard = () => {
               <h4 className="mb-2 text-gray-600 font-semibold">
                 Today's Leaves:
               </h4>
-              <h1 className="text-5xl">4</h1>
+              <h1 className="text-5xl">{leaveCount}</h1>
             </div>
           </div>
         </div>
 
-        <div className="my-7 grid grid-cols-1 md:grid-cols-2 gap-14">
+        {/* <div className="my-7 grid grid-cols-1 md:grid-cols-2 gap-14">
           <TopEmployeeCard />
           <TopEmployeeCard />
-        </div>
+        </div> */}
 
         {/* Bottom Graph */}
         <div className="w-full max-w-4xl mx-auto">

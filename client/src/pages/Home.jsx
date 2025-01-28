@@ -100,8 +100,8 @@ const Home = () => {
           >
             <UserData username={userInfo?.username} email={userInfo?.email} imgUrl={userInfo?.imageUrl} />
             
-            <Link to="/employee-dashboard" className="text-decoration-none">
-      <button className="bg-white/10 text-white px-4 py-2 rounded-full flex items-center gap-2 backdrop-blur-md transition-transform transform hover:scale-95 focus:outline-none mb-5">
+             <Link to="/employee-dashboard" className="text-decoration-none">
+      <button className="bg-white/10 text-white px-4 py-2 rounded-full flex items-center gap-2 backdrop-blur-md transition-transform transform hover:scale-95 focus:outline-none">
         <FaPaperPlane className="text-xl" />
         Your Dashboard
       </button>

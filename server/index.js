@@ -663,16 +663,22 @@ app.get(
   authorizeRoles(["Admin"]),
   async (req, res) => {
     try {
-      // Get the start and end of the current day
-      const startOfDay = new Date();
-      startOfDay.setHours(0, 0, 0, 0); // Set to 00:00:00
-      const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999); // Set to 23:59:59
+      // Get the current date in 'YYYY-MM-DD' format for the local timezone
+      const today = new Date();
 
-      // Fetch all attendances for today
+      // Adjust the date to local timezone
+      const formattedDate = today.toLocaleDateString("en-CA"); // 'en-CA' returns the date as 'YYYY-MM-DD'
+
+      // Log the formattedDate to verify
+      console.log("Formatted Date:", formattedDate); // Debugging step 1
+
+      // Fetch all attendances for today (where the date matches the formatted date)
       const attendances = await Attendance.find({
-        date: { $gte: startOfDay, $lte: endOfDay },
+        date: formattedDate, // Match with the string format stored in the DB
       });
+
+      // Log the attendance data to verify if the query is correct
+      console.log("Fetched Attendances:", attendances); // Debugging step 2
 
       // Calculate the total number of today's attendances
       const totalAttendances = attendances.length;
@@ -686,6 +692,9 @@ app.get(
     } catch (error) {
       console.error("Error fetching attendances:", error);
 
+      // Log the error message
+      console.error("Error details:", error); // Debugging step 3
+
       // Send error response
       res.status(500).json({
         error: true,
@@ -694,6 +703,9 @@ app.get(
     }
   }
 );
+
+
+
 
 
 
@@ -873,6 +885,27 @@ app.get("/get-count-attendance", authenticateToken, async (req, res) => {
   } catch (error) {
     console.error("Error fetching attendance data:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
+app.get('/leave-count', authenticateToken, authorizeRoles(['Admin', 'Manager']), async (req, res) => {
+  try {
+    // Get today's date, ignoring time (set to midnight for comparison)
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start of today
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End of today
+
+    // Query for leaves with leaveDate equal to today and status 'Approved'
+    const leaveCount = await Leave.countDocuments({
+      leaveDate: { $gte: startOfDay, $lte: endOfDay },
+      status: 'Approved', // Only count approved leaves
+    });
+
+    res.json({ leaveCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching the leave count.' });
   }
 });
 
