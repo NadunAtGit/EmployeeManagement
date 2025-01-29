@@ -22,7 +22,7 @@ app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
-app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+app.use(express.static("../client/dist"));
 
 app.get("*",(req,res)=>{
   res.sendFile(path.resolve(__dirname,"..","client","dist","index.html"))
