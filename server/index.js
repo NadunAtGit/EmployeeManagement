@@ -22,17 +22,14 @@ app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, "client", "dist")));
 
-// Serve the React app for all routes (for React Router to handle)
+// Catch-all route to serve index.html for single-page application (React Router)
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+  res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
+
  mongoose.connect(config.connectionString,{useNewUrlParser:true,useUnifiedTopology:true}).then(
     ()=>{
             console.log("database connected sucessfully");
