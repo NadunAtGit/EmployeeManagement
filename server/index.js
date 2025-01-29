@@ -24,7 +24,7 @@ const  PORT=8000;
 
 app.use(express.static("./client/dist"));
 app.get("*",(req,res)=>{
-  res.sendFile(path.resolve(__dirname,"frontend","dist","index.html"))
+  res.sendFile(path.resolve(__dirname,"client","dist","index.html"))
 });
  mongoose.connect(config.connectionString,{useNewUrlParser:true,useUnifiedTopology:true}).then(
     ()=>{
