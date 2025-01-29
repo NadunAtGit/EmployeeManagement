@@ -28,6 +28,11 @@ app.use(express.static(path.join(__dirname, "../client/dist")));
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
 });
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
  mongoose.connect(config.connectionString,{useNewUrlParser:true,useUnifiedTopology:true}).then(
     ()=>{
             console.log("database connected sucessfully");
