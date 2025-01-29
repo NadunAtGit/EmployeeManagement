@@ -4,6 +4,8 @@ import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import PasswordInput from "../components/inputs/PasswordInput";
 import { jwtDecode } from "jwt-decode";
+import Logo from "../assets/logo.png"
+import plumber from "../assets/plumber.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -71,49 +73,54 @@ const Login = () => {
   
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
-        <h2 className="mb-6 text-2xl font-semibold text-center text-gray-700">Login</h2>
-        <form onSubmit={handleLogin}>
-          {/* Email Input */}
-          <div className="mb-4">
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-600">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter your email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 text-sm  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 relative">
+    <div className="absolute top-0 left-0 p-8">
+      <img src={Logo} className="w-62 obeject-fit"/>
+    </div>
+      <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden md:flex">
+        {/* Left Side - Login Form */}
+        <div className="w-full md:w-1/2 p-6 flex items-center justify-center">
+          <div className="w-full max-w-sm">
+           
+            <h2 className="mb-3 text-4xl font-semibold text-start text-black">Login</h2>
+            <h2 className="mb-6 text-xs font-semibold text-start text-gray-400">
+              Welcome back, Enter your details
+            </h2>
+            <form onSubmit={handleLogin}>
+              <div className="mb-4">
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-600">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 text-sm border-b-[1px] border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="mb-6">
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-600">
+                  Password
+                </label>
+                <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+              {error && <p className="mb-4 text-xs text-red-500">{error}</p>}
+              <button
+                type="submit"
+                className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Login
+              </button>
+            </form>
           </div>
-
-          {/* Password Input */}
-          <div className="mb-6">
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-600">
-              Password
-            </label>
-            <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <p className="mb-4 text-xs text-red-500">
-              {error}
-            </p>
-          )}
-
-          {/* Login Button */}
-          <button
-            type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Login
-          </button>
-        </form>
+        </div>
+        {/* Right Side - Image with Gradient Background (Hidden on Mobile) */}
+        <div className="hidden md:flex md:w-1/2 items-center justify-center bg-gradient-to-b from-blue-500 to-blue-300">
+          <img src={plumber} alt="Plumber" className="w-full h-full object-cover" />
+        </div>
       </div>
     </div>
   );

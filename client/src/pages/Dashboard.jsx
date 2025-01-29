@@ -152,7 +152,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-4 border-4 border-blue-500 p-3 rounded-xl">
+          <div className="flex items-center justify-between gap-4 border-4 border-blue-500 p-3 rounded-xl ">
             <div>
               <AiOutlineClockCircle className="text-blue-500 w-20 h-20" />
             </div>

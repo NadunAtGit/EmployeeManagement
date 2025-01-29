@@ -174,7 +174,7 @@ const Employees = () => {
                         className="text-yellow-500 cursor-pointer"
                         size={22}
                         onClick={
-                          () => openUserModalHandler(employee)
+                          () => setOpenUpdateModal({isShown:true,data:employee})
                         }
                       />
                       <AiOutlineDelete

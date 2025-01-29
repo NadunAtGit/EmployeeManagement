@@ -9,7 +9,7 @@ const PasswordInput = ({ value, onChange, placeholder }) => {
   };
 
   return (
-    <div className="flex items-center py-3 px-5 outline-none rounded-md bg-white shadow-sm mb-6">
+    <div className="flex items-center py-3 px-5 border-b-[1px] border-gray-500 bg-white shadow-sm mb-6">
       <input
         type={isShowPassword ? "text" : "password"} // Toggle between "text" and "password"
         placeholder={placeholder || "Password"}

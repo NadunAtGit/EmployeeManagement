@@ -6,6 +6,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
 import uploadImage from "../utils/UploadImage";
 import moment from "moment";
+import {validateEmail,validateSriLankanPhone} from "../utils/validations";
 
 const AddEmpModal = ({ onClose, getAllEmployees }) => {
   const [username, setUsername] = useState("");
@@ -26,7 +27,16 @@ const AddEmpModal = ({ onClose, getAllEmployees }) => {
       setError("Please fill all required fields");
       return;
     }
-
+    if (!validateEmail(email)) {
+      setError("Please enter a valid Sri Lankan email");
+      return;
+    }
+  
+    // Validate phone number
+    if (!validateSriLankanPhone(phone)) {
+      setError("Please enter a valid Sri Lankan phone number");
+      return;
+    }
     setError(""); // Clear previous errors
 
     try {

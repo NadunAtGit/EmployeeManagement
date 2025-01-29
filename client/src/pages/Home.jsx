@@ -74,13 +74,13 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex">
+      <div className="flex min-h-screen">
         {/* Sidebar */}
         <div
           className={`${
             isOpen ? "w-72" : "w-20"
           } bg-gradient-to-b from-[#5b7ad2] via-[#1e40af] to-[#1e429f]
- h-screen p-5 pt-8 relative text-white duration-300 relative`}
+ min-h-screen h-full p-5 pt-8 relative  flex flex-col justify-between text-white duration-300 relative `}
         >
           {/* Menu Icon */}
           <FiMenu
@@ -116,7 +116,7 @@ const Home = () => {
           )}
 
           {isOpen ? (
-            <div className="flex flex-col ites-center justify-center px-2 py-4">
+            <div className="flex flex-col ites-center justify-center px-2 py-4 ">
               {menuItems.map((item, index) => (
                 <Link key={index} to={item.path}>
                   <div className="flex items-center border-4 border-white-100 py-2 px-3 gap-5 rounded-xl cursor-pointer my-3 bg-[#041954] hover:scale-105 hover:bg-black">

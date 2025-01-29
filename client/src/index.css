@@ -48,10 +48,14 @@
   }
 
   .bg-img {
-    background-image: url('./assets/login-bg.jpg') !important;
-    background-size: cover !important;
+    background-image: url('./assets/login-bg.png') !important;
+    background-size: contain !important;  /* Ensures the full image is visible */
     background-position: center !important;
-  }
+    background-repeat: no-repeat !important;  /* Prevents repeating if the image is smaller */
+}
+
+
+  
    .input-box{
     @apply  w-full outline-none px-5 py-3  text-sm bg-gray-100 mb-3;
    }  
@@ -60,7 +64,7 @@
     @apply bg-red-400 text-white font-semibold w-full shadow-md shadow-red-200 rounded-md py-2 my-2;
    }
 
-   .model-box{
+  .model-box{
     @apply w-[80vw]  md:w-[40%] h-[80vh] bg-white rounded-lg  mx-auto mt-14 p-5 overflow-y-scroll  z-50;
   }
 
