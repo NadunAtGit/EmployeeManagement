@@ -14,6 +14,7 @@ const upload=require("./multer");
 const fs=require("fs");
 const path=require("path");
 const Leave=require("./models/LeaveSchema");
+const { escape } = require("querystring");
 
 
 const app=express();
@@ -21,7 +22,10 @@ app.use(cors());
 app.use(express.json());
 const  PORT=8000;
 
-
+app.use(express.static("./client/dist"));
+app.get("*",(req,res)=>{
+  res.sendFile(path.resolve(__dirname,"frontend","dist","index.html"))
+});
  mongoose.connect(config.connectionString,{useNewUrlParser:true,useUnifiedTopology:true}).then(
     ()=>{
             console.log("database connected sucessfully");
