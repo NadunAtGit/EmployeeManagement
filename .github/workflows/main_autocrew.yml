@@ -71,4 +71,4 @@ jobs:
         with:
           app-name: 'autocrew'
           slot-name: 'Production'
-          package: './client/dist'  # Ensure this is the correct path where your build files reside
+          package: './node-app'  # Ensure this is the correct path where your build files reside
