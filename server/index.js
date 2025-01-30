@@ -24,12 +24,12 @@ app.use(cors({
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
-const clientBuildPath = path.join(__dirname, "client", "dist");
-app.use(express.static(clientBuildPath));
+// Serve static files from the 'client/dist' directory
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
-// Catch-all route to serve index.html for React Router
+// Catch-all route to serve index.html
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(clientBuildPath, "index.html"));
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
 });
 
 mongoose.connect(config.connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
