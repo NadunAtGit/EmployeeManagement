@@ -24,11 +24,11 @@ app.use(cors(
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
-app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+app.use(express.static(path.join(__dirname, "client", "dist")));
 
-// Catch-all route to serve index.html for React
+// Catch-all route to serve index.html for React Router
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "client", "dist", "index.html"));
+  res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
 
 
