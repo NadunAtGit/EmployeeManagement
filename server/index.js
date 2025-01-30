@@ -31,18 +31,18 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
 
+mongoose.connect(config.connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("Database connected successfully");
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection error:", error.message);
+    process.exit(1);  // Exit the process on database connection failure
+  });
 
- mongoose.connect(config.connectionString,{useNewUrlParser:true,useUnifiedTopology:true}).then(
-    ()=>{
-            console.log("database connected sucessfully");
-            app.listen(PORT,()=>{
-                console.log(`Server is running on http://localhost:${PORT}`);
-            });
-
-    }
- ).catch((error)=>{
-    console.log("Database connection error:", error.message);
- });
 
 
 app.post("/signin-admin", async (req, res) => {
