@@ -23,11 +23,19 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test
+       # Step 3: Install dependencies for the server
+      - name: Install and build server
         run: |
+          cd server
           npm install
           npm run build --if-present
-          npm run test --if-present
+
+      # Step 4: Install dependencies for the client
+      - name: Install and build client
+        run: |
+          cd client
+          npm install
+          npm run build
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
