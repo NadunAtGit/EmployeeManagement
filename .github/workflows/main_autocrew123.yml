@@ -72,5 +72,5 @@ jobs:
         with:
           app-name: 'autocrew123'
           slot-name: 'Production'
-          package: ./client/dist
+          package: .
           
