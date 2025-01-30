@@ -22,12 +22,10 @@ app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
-// Serve static files from the 'client/dist' directory
-app.use(express.static(path.join(__dirname, 'client', 'dist')));
+app.use(express.static(path.join(__dirname, "../client/build")));
 
-// Catch-all route to serve index.html
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
 mongoose.connect(config.connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
