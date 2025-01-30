@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/e2950515-288f-4640-ad0d-36459c6363af/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/azureintergrate",
+    "appService.deploySubpath": "."
+}

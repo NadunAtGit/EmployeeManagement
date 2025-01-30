@@ -18,16 +18,19 @@ const { escape } = require("querystring");
 
 
 const app=express();
-app.use(cors());
+
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
 // Serve static files from the 'client/dist' directory
+app.use(cors({
+}));
+
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
-// Catch-all route to serve index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+// For any other routes, send the index.html file from dist
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
 mongoose.connect(config.connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
