@@ -18,7 +18,9 @@ const { escape } = require("querystring");
 
 
 const app=express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ALLOWED_ORIGINS
+}));
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 
