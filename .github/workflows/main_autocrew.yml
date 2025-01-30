@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -26,21 +26,21 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-      # Step 4: Install dependencies for the client
+
       - name: Install client dependencies
         run: |
           cd client
           npm install
           npm run build --if-present
           npm run test --if-present
-      
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
           path: |
-            server/
-            client/dist/
+            server
+            client/dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,8 +49,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -71,4 +71,4 @@ jobs:
         with:
           app-name: 'autocrew'
           slot-name: 'Production'
-          package: './node-app'  # Adjust this path to where the build files are located
+          package: './node-app'  # Ensure this is the correct path where your build files reside
